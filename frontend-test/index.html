@@ -1,0 +1,178 @@
+<head>
+  <script>
+    let MaxClaimableSeason = 1
+    let season = 0
+    let investUsers = {}
+    let allProfit = {}
+    let allLog = 'Result:'
+
+
+    function show(log){
+      allLog = allLog +'\n'+log
+      console.log(allLog)
+      document.getElementById('right-show').value = allLog
+
+    }
+
+    function getCurrentSeason(){
+      return season
+    }
+
+    function addSeason(){
+      season = season + 1
+      
+      console.log(' ')
+      show(' ')
+      console.log(`Season ${season}`)
+      show(`Season ${season}`)
+    }
+
+    function invest(number,name){
+      number = Number(number)
+      if(investUsers[name]){
+        investUsers[name] = investUsers[name] + number
+      }else{
+        investUsers[name] = number
+      }
+      show(`invest ${number} 	by ${name}`)
+      console.log(`invest ${number} 	by ${name}`)
+    }
+
+    function getInvestAllUsers(){
+      return investUsers
+    }
+
+    function addProfit(profit){
+      if(!allProfit[season]){
+        allProfit[season] = profit
+      }else{
+        allProfit[season] = allProfit[season] + profit
+      }
+      show(`addProfit ${profit}`)
+      console.log(`addProfit ${profit}`)
+    }
+
+    function getAllProfit(){
+      return allProfit
+    }
+
+    function withdraw(number,name){
+      if(investUsers[name]){
+        if(investUsers[name]>=number){
+          investUsers[name] = investUsers[name] - number
+        }else{
+          show('餘額不足')
+          console.log('餘額不足')
+        }
+      }else{
+        // investUsers[name] = number
+        show('餘額不足')
+        console.log('餘額不足')
+      }
+    }
+
+    function claim(name){
+      show(`claim 		by ${name}`)
+      console.log(`claim 		by ${name}`)  
+      
+      const thisSeason = getCurrentSeason()
+      let lessThanSeason = thisSeason - MaxClaimableSeason
+      if(lessThanSeason<1){
+        show('Receives nothing')
+        console.log('Receives nothing')
+      }else{
+        let investUsersAll = 0    
+        Object.keys(investUsers).map((key)=>{
+          investUsersAll = investUsersAll+investUsers[key]
+        })
+        let userClaimAll = 0
+        for(i=lessThanSeason;i<=thisSeason;i++){
+          if(allProfit[i]){
+            let userPercent = investUsers[name]/investUsersAll
+            console.log(i,investUsers[name],investUsersAll,userPercent)
+            userClaimAll = allProfit[i]*userPercent
+          }
+        }
+        if(userClaimAll){
+          show(`Receives ${userClaimAll}`)
+          console.log(`Receives ${userClaimAll}`)
+        }else{
+          show(`Receives nothing`)
+          console.log(`Receives nothing`)      
+        }
+        return userClaimAll
+      }
+      
+    }  
+  </script>
+  <style>
+    #right-show{
+      position: absolute;
+      top:50px;
+      right:100px;
+      width:400px;
+      height:800px;
+    }
+    #setting{
+      position: absolute;
+      top:50px;
+      left:100px;
+      /* width:400px;
+      height:800px; */
+    }
+  </style>
+</head>
+<body>
+  <div id='setting'>
+    <div>
+      Setting：
+      MaxClaimableSeason: <input id='MaxClaimableSeasonInput' placeholder=1 />
+    </div>
+    <button onclick="start()">Start</button>
+    <div>
+      Name:<input id='name'/> Number:<input id='number'/> <button onclick="investButton()">invest</button>
+    </div>
+    <div>
+      Profit:<input id='profit'/><button onclick="addProfitButton()">add profit</button>
+    </div>
+    <div>
+        <button onclick='addSeasonButton()'>add Season</button>
+        
+    </div>
+    <div>
+      claim-name:<input id='claim-name'/> <button onclick="claimButton()">Claim</button>
+    </div>
+  </div>
+  <textarea id='right-show'>Result Log:</textarea>
+  <script>
+    function start(){
+      if(document.getElementById('MaxClaimableSeasonInput').value){
+        MaxClaimableSeason = document.getElementById('MaxClaimableSeasonInput').value
+      }
+      season = 0
+      investUsers = {}
+      allProfit = {}
+      addSeason()
+    }
+    function investButton(){
+      let name = document.getElementById('name').value
+      let number = document.getElementById('number').value
+      document.getElementById('name').value = ''
+      document.getElementById('number').value = ''
+      invest(number,name)
+    }
+    function addProfitButton(){
+      let profit = document.getElementById('profit').value
+      document.getElementById('profit').value = ''
+      addProfit(profit)
+    }
+    function addSeasonButton(){
+      addSeason()
+    }
+    function claimButton(){
+      let claimName = document.getElementById('claim-name').value
+
+      claim(claimName)
+    }
+  </script>
+</body>

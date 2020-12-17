@@ -1,6 +1,8 @@
 The main code is on index.js.
 
 ## RUN TEST
+The test code is on test/unit-test
+
 step1:
 install node.js
 https://nodejs.org/en/download/
